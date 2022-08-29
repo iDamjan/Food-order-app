@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useReducer } from "react";
 
 import CartContext from "./cart-context";
@@ -65,6 +66,7 @@ const CartProvider = (props) => {
     cartReducer,
     defaultCartState
   );
+  const [order, setOrder] = useState(false)
 
   const addItemToCartHandler = (item) => {
     dispatchCartAction({ type: "ADD", item: item });
@@ -79,6 +81,8 @@ const CartProvider = (props) => {
     totalAmount: cartState.totalAmount,
     addItem: addItemToCartHandler,
     removeItem: removeItemFromCartHandler,
+    order,
+    setOrder,
   };
 
   return (

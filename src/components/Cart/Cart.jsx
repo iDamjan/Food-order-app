@@ -10,30 +10,30 @@ const Cart = ({ onCloseCart }) => {
   const hasItems = cartCtx.items.length > 0;
 
   const cartItemRemoveHandler = (id) => {
-    cartCtx.removeItem(id)
+    cartCtx.removeItem(id);
   };
   const cartItemAddHandler = (item) => {
-    cartCtx.addItem({...item, amount:1})
+    cartCtx.addItem({ ...item, amount: 1 });
   };
 
   const cartItems = (
-
     <ul className={classes["cart-items"]}>
-
       {cartCtx.items.map((item) => (
-        
         <CartItem
           name={item.name}
           key={item.id}
           price={item.price}
           amount={item.amount}
-          onRemove = {cartItemRemoveHandler.bind(null, item.id)}
-          onAdd = {cartItemAddHandler.bind(null, item)}
+          onRemove={cartItemRemoveHandler.bind(null, item.id)}
+          onAdd={cartItemAddHandler.bind(null, item)}
         />
       ))}
     </ul>
   );
-
+  const orderFoodHandler = () => {
+    cartCtx.setOrder(true);
+  };
+  
   return (
     <Modal onClose={onCloseCart}>
       {cartItems}
@@ -45,7 +45,11 @@ const Cart = ({ onCloseCart }) => {
         <button className={classes["button-alt"]} onClick={onCloseCart}>
           Close
         </button>
-        {hasItems && <button className={classes.button}>Order</button>}
+        {hasItems && (
+          <button onClick={orderFoodHandler} className={classes.button}>
+            Order
+          </button>
+        )}
       </div>
     </Modal>
   );

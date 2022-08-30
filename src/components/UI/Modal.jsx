@@ -24,11 +24,12 @@ const Modal = (props) => {
   return (
     <>
       {ReactDOM.createPortal(<Backdrop onClose = {props.onClose}/>, portalElement)}
-      {ReactDOM.createPortal(
+      {ctx.order ? ReactDOM.createPortal(<Form />, portalElement)  : ReactDOM.createPortal(
         <ModalOverlay>{props.children}</ModalOverlay>,
         portalElement
       )}
-      {ctx.order && <Form />}
+      
+    
     </>
   );
 };

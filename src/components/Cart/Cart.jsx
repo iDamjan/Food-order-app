@@ -31,7 +31,7 @@ const Cart = ({ onCloseCart }) => {
     </ul>
   );
   const orderFoodHandler = () => {
-    cartCtx.setOrder(true);
+    cartCtx.setIsOrdered(true);
   };
   
   return (

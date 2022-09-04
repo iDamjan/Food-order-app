@@ -8,44 +8,40 @@ const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
 
   useEffect(() => {
-
     const fetchMeals = async () => {
-      
       const response = await fetch(
         "https://food-app-d537e-default-rtdb.firebaseio.com/meals.json"
       );
-      const responseData = await response.json();
-
-      let loadedMeals = [];
-
-      for (const key in responseData) {
-        loadedMeals.push({
-          if: key,
-          name: responseData[key].name,
-          price: responseData[key].price,
-          description: responseData[key].description,
-        });
+      if (!response.ok) {
+        throw new Error("Wrong url");
       }
+      const responseData = await response.json();
+      const loadedMeals = Object.keys(responseData).map((key) => ({
+        id: key,
+        name: responseData[key].name,
+        price: responseData[key].price,
+        description: responseData[key].description,
+      }));
+
       setMeals(loadedMeals);
     };
     fetchMeals();
   });
 
-  // MAP function for rendering the Meal list
-  const mealList = meals.map((meal) => (
-    <MealItem
-      id={meal.id}
-      name={meal.name}
-      key={meal.id}
-      description={meal.description}
-      price={meal.price}
-    />
-  ));
-
   return (
     <section className={classes.meals}>
       <Card>
-        <ul>{mealList}</ul>
+        <ul>
+          {meals.map((meal) => (
+            <MealItem
+              id={meal.id}
+              name={meal.name}
+              key={meal.id}
+              description={meal.description}
+              price={meal.price}
+            />
+          ))}
+        </ul>
       </Card>
     </section>
   );

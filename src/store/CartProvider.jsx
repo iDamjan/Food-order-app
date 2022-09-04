@@ -57,41 +57,41 @@ const cartReducer = (state, action) => {
     };
   }
   if (action.type === "REMOVE_ALL") {
-    return {
-      defaultCartState,
-    };
+    return defaultCartState
+    
   }
-  return defaultCartState;
+
+  throw new Error("uknown option state");
 };
 
 const CartProvider = (props) => {
   const [cartState, dispatchCartAction] = useReducer(
     cartReducer,
     defaultCartState
-  );
-  const [order, setOrder] = useState(false);
+  )
+  const [isOrdered, setIsOrdered] = useState(false);
 
   const addItemToCartHandler = (item) => {
     dispatchCartAction({ type: "ADD", item: item });
-  };
+  }
 
   const removeItemFromCartHandler = (id) => {
     dispatchCartAction({ type: "REMOVE", id: id });
-  };
+  }
 
   const resetItemsFromCartHandler = (items) => {
     dispatchCartAction({ type: "REMOVE_ALL", items: items });
-  };
+  }
 
   const cartContext = {
     items: cartState.items,
     totalAmount: cartState.totalAmount,
     addItem: addItemToCartHandler,
     removeItem: removeItemFromCartHandler,
-    order,
-    setOrder,
+    isOrdered,
+    setIsOrdered,
     resetItems: resetItemsFromCartHandler,
-  };
+  }
 
   return (
     <CartContext.Provider value={cartContext}>

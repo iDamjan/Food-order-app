@@ -4,41 +4,12 @@ import CartContext from "../../store/cart-context";
 import classes from "./Form.module.css";
 
 export default function Form() {
-  //CONTEXt
   const ctx = useContext(CartContext);
 
   const [name, setName] = useState("");
-  const [nameIsTouched, setNameIsTouched] = useState(false);
+  const [formError, setFormError] = useState({});
+  const [formTouched, setFormTouched] = useState({});
   const [password, setPassword] = useState("");
-  const [passwordIsTouched, setPasswordIsTouched] = useState(false);
-
-  // NAME VALIDATION
-  let nameIsValid = name.trim() != "" && name.length > 4;
-
-  //PASSWORD VALIDATION\
-  const passwordIsValid = password.length > 6;
-
-  const nameChangeHandler = (e) => {
-    setName(e.target.value);
-  };
-  const passwordChangeHandler = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const onBlurNameHandler = (e) => {
-    setNameIsTouched(true);
-  };
-
-  const onBlurPasswordHandler = (e) => {
-    setPasswordIsTouched(true);
-  };
-
-  const nameIsInvalid = !nameIsValid && nameIsTouched;
-  const passwordIsInvalid = !passwordIsValid && passwordIsTouched;
-  const formIsValid = nameIsValid && passwordIsValid;
-
-  const nameClasses = nameIsInvalid ? classes.invalid : classes.input;
-  const passwordClasses = passwordIsInvalid ? classes.invalid : classes.input;
 
   const submitFormHandler = async (e) => {
     e.preventDefault();
@@ -52,44 +23,86 @@ export default function Form() {
 
     ctx.resetItems(ctx.items);
   };
+
+  function isValidHandler() {
+    const nameIsValid = name.trim() !== "" && name.length > 4;
+    const passwordIsValid = password.length > 6;
+    const error = {
+      ...(!nameIsValid &&
+        formTouched.name && {
+          name: "Enter a username with minimum 5 characters",
+        }),
+      ...(!passwordIsValid &&
+        formTouched.password && {
+          password: "Enter a password longer than 6 characters",
+        }),
+    };
+
+    setFormError(error);
+  }
+
+  const isFormValid = () => {
+    return Object.keys(formError).length === 0;
+  };
+
+  const setFormName = (e) => {
+    setName(e.target.value);
+    isValidHandler();
+  };
+
+  const setFormPassword = (e) => {
+    setPassword(e.target.value);
+    isValidHandler();
+  };
+
   return (
     <form onSubmit={submitFormHandler} className={classes.form}>
-      {/* NAME  */}
-      <div className={nameClasses}>
+      <div className={formError.name ? classes.invalid : classes.input}>
         <label htmlFor="name">Enter your name</label>
         <input
-          onChange={nameChangeHandler}
-          onBlur={onBlurNameHandler}
+          onChange={setFormName}
+          onBlur={() => {
+            Object.assign(formTouched, { name: true });
+            setFormTouched(formTouched);
+            isValidHandler();
+          }}
           type="name"
           id="name"
           placeholder="User123"
         />
-        {nameIsInvalid ? <p className={classes.text}>Enter a username with minimum 5 characters</p> : ''}
+        {formError.name ? <p className={classes.text}>{formError.name}</p> : ""}
       </div>
 
-      {/* PASSWORD  */}
-      <div className={passwordClasses}>
+      <div className={formError.password ? classes.invalid : classes.input}>
         <label htmlFor="password">Enter password</label>
         <input
           type="password"
           id="password"
           placeholder="password123#"
-          onChange={passwordChangeHandler}
-          onBlur={onBlurPasswordHandler}
+          onChange={setFormPassword}
+          onBlur={() => {
+            Object.assign(formTouched, { password: true });
+            setFormTouched(formTouched);
+            isValidHandler();
+          }}
         />
-        {passwordIsInvalid ? <p className={classes.text}>Enter a password longer than 6 characters</p> : ''}
+        {formError.password ? (
+          <p className={classes.text}>{formError.password}</p>
+        ) : (
+          ""
+        )}
       </div>
-      {/* PASSWORD  */}
+
       <div>
         <button
           className={classes.buttonSubmit}
-          disabled={!formIsValid}
+          disabled={!isFormValid()}
           type="sumbit"
         >
           Submit
         </button>
         <button
-          onClick={() => ctx.setOrder(false)}
+          onClick={() => ctx.setIsOrdered(false)}
           className={classes.buttonSubmit}
           type="click"
         >
